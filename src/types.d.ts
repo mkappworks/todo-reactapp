@@ -1,7 +1,10 @@
 interface Todo {
+  id: string;
   text: string;
   complete: boolean;
 }
+
+type RemoveTodo = (selectedTodo: Todo) => void;
 
 type ToggleTodo = (selectedTodo: Todo) => void;
 

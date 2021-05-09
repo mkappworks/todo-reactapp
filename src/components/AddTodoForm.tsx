@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { Form, Row, Col, Button, Input } from "antd";
 import { PlusCircleFilled } from "@ant-design/icons";
@@ -10,13 +10,10 @@ interface Props {
 }
 
 export const AddTodoForm: React.FC<Props> = ({ addTodo }) => {
-  const [text, setText] = useState("");
-
   const [form] = Form.useForm();
 
   const onFinish = () => {
     addTodo(form.getFieldValue("name"));
-    setText("");
 
     form.resetFields();
   };

@@ -1,6 +1,10 @@
 import React from "react";
 import { Tooltip, Tag, List, Button, Popconfirm, Switch } from "antd";
-import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
+import {
+  CloseOutlined,
+  CheckOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 
 import "./TodoListItem.less";
 
@@ -35,7 +39,7 @@ export const TodoListItem: React.FC<Props> = ({
           }}
         >
           <Button className="remove-todo-button" type="primary" danger>
-            X
+            <DeleteOutlined />
           </Button>
         </Popconfirm>,
       ]}
@@ -43,7 +47,7 @@ export const TodoListItem: React.FC<Props> = ({
       key={todo._id}
     >
       <div className="todo-item">
-        <Tag color={todo.complete ? "cyan" : "red"} className="todo-tag">
+        <Tag color={todo.complete ? "green" : "red"} className="todo-tag">
           {todo.text}
         </Tag>
       </div>

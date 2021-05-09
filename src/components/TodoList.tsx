@@ -1,4 +1,7 @@
 import React from "react";
+
+import { List } from "antd";
+
 import { TodoListItem } from "./TodoListItem";
 
 interface Props {
@@ -11,17 +14,24 @@ export const TodoList: React.FC<Props> = ({
   todos,
   toggleTodo,
   removeTodo,
-}) => {
-  return (
-    <ul>
-      {todos.map((todo) => (
-        <TodoListItem
-          key={todo._id}
-          todo={todo}
-          removeTodo={removeTodo}
-          toggleTodo={toggleTodo}
-        />
-      ))}
-    </ul>
-  );
-};
+}) => (
+  <List
+    locale={{
+      emptyText: "There's nothing to do :(",
+    }}
+    dataSource={todos}
+    renderItem={(todo) => (
+      <TodoListItem
+        todo={todo}
+        removeTodo={removeTodo}
+        toggleTodo={toggleTodo}
+      />
+    )}
+    pagination={{
+      position: "bottom",
+      pageSize: 10,
+    }}
+  />
+);
+
+

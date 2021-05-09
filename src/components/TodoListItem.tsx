@@ -10,25 +10,6 @@ interface Props {
   removeTodo: RemoveTodo;
 }
 
-// export const TodoListItem: React.FC<Props> = ({ todo, toggleTodo }) => {
-//   return (
-//     <li>
-//       <label
-//         style={{ textDecoration: todo.complete ? "line-through" : undefined }}
-//       >
-//         <input
-//           type="checkbox"
-//           checked={todo.complete}
-//           onClick={() => {
-//             toggleTodo(todo);
-//           }}
-//         />{" "}
-//         {todo.text}
-//       </label>
-//     </li>
-//   );
-// };
-
 export const TodoListItem: React.FC<Props> = ({
   todo,
   toggleTodo,
@@ -59,7 +40,7 @@ export const TodoListItem: React.FC<Props> = ({
         </Popconfirm>,
       ]}
       className="list-item"
-      key={todo.id}
+      key={todo._id}
     >
       <div className="todo-item">
         <Tag color={todo.complete ? "cyan" : "red"} className="todo-tag">

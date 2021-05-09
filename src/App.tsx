@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-
-import { v4 as uuidv4 } from "uuid";
+import React, { useState, useEffect, useCallback } from "react";
 
 import { Row, Col, Card, PageHeader, message } from "antd";
 import "antd/dist/antd.css";
@@ -9,47 +7,107 @@ import "./App.less";
 import { TodoList } from "./components/TodoList";
 import { AddTodoForm } from "./components/AddTodoForm";
 
-const initialTodos: Todo[] = [
-  {
-    id: "1",
-    text: "Walk the dog",
-    complete: false,
-  },
-  {
-    id: "2",
-    text: "Write app",
-    complete: true,
-  },
-];
+const initialTodos: Todo[] = [];
+
+const backendURL = "https://todo-nodedeploy.herokuapp.com/";
 
 function App() {
   const [todos, setTodos] = useState(initialTodos);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchTodosHandler = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(backendURL);
+      if (!response.ok) {
+        throw new Error("Something went wrong!");
+      }
+
+      const data = await response.json();
+
+      console.log(data);
+
+      const loadedTodos = [];
+
+      for (const key in data) {
+        loadedTodos.push({
+          _id: data[key]._id,
+          text: data[key].text,
+          complete: data[key].complete,
+        });
+      }
+
+      setTodos(loadedTodos);
+    } catch (error) {
+      setError(error.message);
+    }
+    setIsLoading(false);
+  }, [fetch]);
+
+  useEffect(() => {
+    fetchTodosHandler();
+  }, [fetchTodosHandler]);
+
+  const addTodo: AddTodo = (text: string) => {
+    const newTodo = { text, complete: false };
+
+    addTodoHandler(newTodo);
+    fetchTodosHandler();
+
+    message.success("Todo added!");
+  };
+
+  const addTodoHandler = async (todo: { text: string; complete: boolean }) => {
+    const response = await fetch(backendURL, {
+      method: "POST",
+      body: JSON.stringify(todo),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+  };
 
   const toggleTodo: ToggleTodo = (selectedTodo: Todo) => {
-    const newTodos = todos.map((todo) => {
-      if (todo === selectedTodo) {
-        return {
-          ...todo,
-          complete: !todo.complete,
-        };
-      }
-      return todo;
-    });
-    setTodos(newTodos);
+    updateTodoHandler(selectedTodo);
+
+    fetchTodosHandler();
     message.info("Todo state updated!");
   };
 
-  const removeTodo: RemoveTodo = (selectedTodo: Todo) => {
-    const newTodos = todos.filter((todo) => todo.id !== selectedTodo.id);
+  const updateTodoHandler = async (todo: {
+    _id: string;
+    text: string;
+    complete: boolean;
+  }) => {
+    console.log(todo);
+    const response = await fetch(backendURL + todo._id, {
+      method: "PATCH",
+      body: JSON.stringify({ text: todo.text, complete: !todo.complete }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-    setTodos(newTodos);
+    const data = await response.json();
+  };
+
+  const removeTodo: RemoveTodo = (selectedTodo: Todo) => {
+    deleteTodoHandler(selectedTodo._id);
+
+    fetchTodosHandler();
     message.warn("Todo removed!");
   };
 
-  const addTodo: AddTodo = (text: string) => {
-    const newTodo = { id: uuidv4(), text, complete: false };
-    setTodos([...todos, newTodo]);
-    message.success("Todo added!");
+  const deleteTodoHandler = async (_id: string) => {
+    const response = await fetch(backendURL + _id, {
+      method: "DELETE",
+    });
+
+    const data = await response.json();
   };
 
   return (

@@ -1,10 +1,10 @@
-# Getting Started with Create React App
+# Todo React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+First install the npm package using:
 
-## Available Scripts
+### `npm install`
 
-In the project directory, you can run:
+In the project directory, you can run the app using:
 
 ### `npm start`
 
